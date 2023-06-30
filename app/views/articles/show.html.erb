@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show Article</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    /* Custom styles */
+    body {
+      background: #fff;
+    }
+
+    .container {
+      margin-top: 40px;
+    }
+
+    .card {
+      background: linear-gradient(to right, #f8a5c2, #84c0f7);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .card-text {
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h1><%= @article.title %></h1>
+            <p><%= @article.body %></p>
+             <ul>
+              <li><%= link_to "Edit", edit_article_path(@article) %></li>
+              <li><%= link_to "Delete", article_path(@article), data:{
+                  turbo_method: :delete,
+                  turbo_confirm: "Are you sure?"
+              }%></li>
+
+            </ul>
+            <h2>Comments</h2>
+            <% @article.comments.each do |comment| %>
+            <% unless comment.archived? %>
+            <p>
+              <strong>Commenter:</strong>
+              <%= comment.commenter %>
+            </p>
+            <p>
+              <strong>Comment:</strong>
+              <%= comment.body %>
+            </p>
+              <p>
+              <%= link_to "Destroy Comment", [comment.article, comment], data: {
+                            turbo_method: :delete,
+                            turbo_confirm: "Are you sure?"
+                          } %>
+            </p>
+            <% end %>
+            <% end %>
+            <h2>Add comments:</h2>
+            <%= form_with model: [@article,@article.comments.build] do |form| %>
+            <p>
+              <%= form.label :commenter %><br>
+              <%= form.text_field :commenter %>
+            </p>
+            <p>
+              <%= form.label :body %><br>
+              <%= form.text_area :body%>
+            </p>
+            <p>
+              <%= form.label :status %><br>
+              <%= form.select :status, ['public','private','archived'],selected: 'public' %>
+            </br>
+            <p>
+              <%= form.submit %>
+            </p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+
+</html>
